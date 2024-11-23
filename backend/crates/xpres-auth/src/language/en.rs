@@ -1,4 +1,3 @@
-
 use super::*;
 
 use Error::*;
@@ -13,10 +12,7 @@ impl Language {
             UserNotFoundError => "User not found",
             InvalidEmailAddressError => "That email address is not valid.",
             EmailAlreadyExists => "That email already exists. Try logging in.",
-            _ => "Internal server error."
+            _ => "Internal server error.",
         }
     }
 }
-  
-  
-    

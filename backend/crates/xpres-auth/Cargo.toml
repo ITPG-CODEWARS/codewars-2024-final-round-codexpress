@@ -1,17 +1,7 @@
 [package]
 name = "xpres-auth"
 version = "0.1.0"
-
-
-[features]
-sqlx-sqlite = ["sqlx/sqlite"]
-sqlx-postgres = ["sqlx/postgres"]
-sqlx-mysql = ["sqlx/mysql"]
-
-
-[dependencies.rusqlite]
-version = "0.27.0"
-optional = true
+edition = "2021"
 
 
 [dependencies]
@@ -19,42 +9,28 @@ rand = ">=0.8.5"
 rust-argon2 = ">=1.0.0"
 lazy_static = ">=1.4.0"
 regex = ">=1.5.6"
-serde_json = ">=1.0.82"
 chashmap = ">=2.2.2"
 thiserror = ">=1.0.31"
 async-trait = ">=0.1.56"
 fehler = ">=1.0.0"
 chrono = ">=0.4.19"
 validator = { version = ">=0.15.0", features = ["derive"] }
-futures= ">=0.3.21"
+futures = ">=0.3.21"
 
+[dependencies.serde_json]
+workspace = true
 
 [dependencies.sqlx]
-version = ">=0.6.0"
-optional = true
-
+workspace = true
 
 [dependencies.rocket]
-version = ">=0.5.0"
-features = ["secrets"]
+workspace = true
 
 [dependencies.serde]
-version = ">=1.0.138"
-features = ["derive"]
-
-[dependencies.tokio-postgres]
-version = "0.7.6"
-optional = true
-
-
-[dependencies.redis]
-version = "0.21.5"
-features = ["aio", "tokio-comp"]
-optional = true
+workspace = true
 
 [dependencies.tokio]
-version = "1.19.2"
-features = ["rt", "rt-multi-thread"]
+workspace = true
 
 # [dev-dependencies]
 # tokio-postgres= "0.7.6"
@@ -77,14 +53,3 @@ features = ["rt", "rt-multi-thread"]
 # [dev-dependencies.sqlx]
 # version = ">=0.6.0"
 # features = ["runtime-tokio-rustls"]
-
-# [dev-dependencies.rocket_auth]
-# path = "../rocket_auth"
-# features = [
-#     "sqlx-sqlite",
-#     "sqlx-postgres",
-#     "sqlx-mysql",
-#     "redis",
-#     "tokio-postgres",
-#     "rusqlite",
-# ]

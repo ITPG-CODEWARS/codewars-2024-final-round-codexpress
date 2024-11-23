@@ -1,29 +1,12 @@
-use super::auth::{Auth, validate_email};
+use super::auth::{validate_email, Auth};
 use super::rand_string;
 
+use crate::error;
 use crate::prelude::*;
 use rocket::http::Status;
 use rocket::request::{FromRequest, Outcome, Request};
-use crate::error;
 
 impl User {
-    /// This method allows to reset the password of a user.
-    /// In order for the new password to be saved, it must be passed to a [`Users`] instance.
-    /// This function is meant for cases where the user lost their password.
-    /// In case the user is authenticated,
-    /// you can change it more easily with [`change_password`](`super::auth::Auth::change_password`).
-    /// This function will fail in case the password is not secure enough.
-    /// 
-    /// ```rust
-    /// use rocket::{State, post};
-    /// use rocket_auth::{Error, Users, User};
-    /// #[post("/reset-password/<new_password>")]
-    /// async fn reset_password(mut user: User, users: &State<Users>, new_password: String) -> Result<(), Error> {
-    ///     user.set_password(&new_password);
-    ///     users.modify(&user).await?;
-    ///     Ok(())
-    /// }
-    /// ```
     pub fn set_password(&mut self, new: &str) -> Result<(), Box<dyn std::error::Error>> {
         crate::forms::is_secure(new)?;
         let password = new.as_bytes();
@@ -34,57 +17,19 @@ impl User {
         Ok(())
     }
 
-    /// Compares the password of the currently authenticated user with a another password.
-    /// Useful for checking password before resetting email/password.
-    /// To avoid bruteforcing this function should not be directly accessible from a route.
-    /// Additionally, it is good to implement rate limiting on routes using this function.
-    
     pub fn compare_password(&self, password: &str) -> Result<bool, argon2::Error> {
         verify_encoded(&self.password, password.as_bytes())
     }
 
-    /// This is an accessor function for the private `id` field.
-    /// This field is private, so that it is not modified by accident when updating a user.
-    /// ```rust
-    /// use rocket::{State, get};
-    /// use rocket_auth::{Error, User};
-    /// #[get("/show-my-id")]
-    /// fn show_my_id(user: User) -> String {
-    ///     format!("Your user_id is: {}", user.id())
-    /// }
-    /// ```
     pub fn id(&self) -> i32 {
         self.id
     }
-    /// This is an accessor field for the private `email` field.
-    /// This field is private so an email cannot be updated without checking whether it is valid.
-    /// ```rust
-    /// use rocket::{State, get};
-    /// use rocket_auth::{Error, User};
-    /// #[get("/show-my-email")]
-    /// fn show_my_email(user: User) -> String {
-    ///     format!("Your user_id is: {}", user.email())
-    /// }
-    /// ```
+
     pub fn email(&self) -> &str {
         &self.email
     }
 
-    /// This functions allows to easily modify the email of a user.
-    /// In case the input is not a valid email, it will return an error.
-    /// In case the user corresponds to the authenticated client, it's easier to use [`Auth::change_email`].
-    /// ```rust
-    /// # use rocket::{State, get};
-    /// # use rocket_auth::{Error, Auth};
-    /// #[get("/set-email/<email>")]
-    /// async fn set_email(email: String, auth: Auth<'_>) -> Result<String, Error> {
-    ///     let mut user = auth.get_user().await.unwrap();
-    ///     user.set_email(email)?;
-    ///     auth.users.modify(&user).await?;
-    ///     Ok("Your user email was changed".into())
-    /// }
-    /// ```
-    pub fn set_email(&mut self, email: String) -> Result<(), Error>{
+    pub fn set_email(&mut self, email: String) -> Result<(), Error> {
         if validate_email(&email) {
             self.email = email.to_lowercase();
             Ok(())
@@ -145,8 +90,8 @@ impl<'r> FromRequest<'r> for AdminUser {
     }
 }
 
-use std::{ops::*, result};
 use argon2::verify_encoded;
+use std::{ops::*, result};
 
 impl Deref for AdminUser {
     type Target = User;

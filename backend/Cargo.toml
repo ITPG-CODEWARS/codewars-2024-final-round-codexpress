@@ -1,5 +1,11 @@
 [workspace]
 resolver = "2"
-members = [
-    "crates/*"
-]
+members = ["crates/*"]
+
+[workspace.dependencies]
+tokio = { version = "1.41.1", features = ["full", "rt", "rt-multi-thread"] }
+serde = { version = "1.0.215", features = ["derive"] }
+serde_json = { version = "1.0.133" }
+rocket = { version = "0.5.1", features = ["secrets"] }
+libsqlite3-sys = { version = "0.30.1", features = ["bundled"] }
+sqlx = { version = "0.8.2", features = ["runtime-tokio", "sqlite"] }
