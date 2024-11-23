@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профил</title>
+    <link rel="stylesheet" href="auth.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <a href="/"><img src="../images/logo.webp" class="logo"></a>
+            <a href="#" style="--i:1;" class="links active">Маршрути</a>
+            <a href="/ticket" style="--i:2;" class="links">Билети</a>
+            <a href="/" style="--i:3;" class="links">За сайта</a>
+        </nav>
+       
+    </header>
+
+    
+    <div class="container">
+        
+        <!-- Registration Form -->
+        <div id="registrationForm">
+            <h1>Регистрация</h1>
+            <form id="register" action="api/user/register" action="POST" enctype="application/x-www-form-urlencoded">
+                <input type="text" name="username" placeholder="Име" required>
+                <input type="email" name="email" placeholder="Имейл" required>
+                <div class="password-container1">
+                    <input type="password" name="password" placeholder="Парола" required>
+                    <i id="togglePasswordReg" class="fa-solid fa-eye" style="cursor: pointer;"></i>
+                </div>
+                <div class="password-container1">
+                    <input type="password" name="repeatPassword" placeholder="Повтори парола" required>
+                    <i id="togglePasswordRegRepeat" class="fa-solid fa-eye" style="cursor: pointer;"></i>
+                </div>
+                <button type="submit">Създай профил</button>
+            </form>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginForm" class="hidden">
+            <h1>Вход</h1>
+            <form id="login"  action="api/user/login" action="POST" enctype="application/x-www-form-urlencoded">
+                <input type="email" name="email" placeholder="Имейл" required>
+                <div class="password-container1">
+                    <input type="password" name="password" placeholder="Парола" required>
+                    <i id="togglePasswordLogin" class="fa-solid fa-eye" style="cursor: pointer;"></i>
+                </div>
+                <button type="submit">Влез в профила</button>
+            </form>
+            <button id="logoutButton" class="hidden">Излез от профила</button>
+        </div>
+
+        <div id="message"></div>
+        <p id="toggleLink">
+            Вече имаш профил? <span class="toggle-link" onclick="toggleForms()">Влез тук</span>
+        </p>
+        <p id="toggleLink2" class="hidden">
+            Нямаш профил? <span class="toggle-link" onclick="toggleForms()">Създай тук</span>
+        </p>
+    </div>
+
+    <script>
+        // Toggle between registration and login forms
+        function toggleForms() {
+            const registrationForm = document.getElementById('registrationForm');
+            const loginForm = document.getElementById('loginForm');
+            const toggleLink = document.getElementById('toggleLink');
+            const toggleLink2 = document.getElementById('toggleLink2');
+
+            registrationForm.classList.toggle('hidden');
+            loginForm.classList.toggle('hidden');
+
+            // Show the appropriate toggle link based on the current form
+            if (registrationForm.classList.contains('hidden')) {
+                toggleLink.style.display = 'none'; // Hide login link
+                toggleLink2.style.display = 'block'; // Show register link
+            } else {
+                toggleLink.style.display = 'block'; // Show login link
+                toggleLink2.style.display = 'none'; // Hide register link
+            }
+        }
+
+        // Password toggle logic for registration
+        document.getElementById('togglePasswordReg').addEventListener('click', () => togglePasswordVisibility('register'));
+        document.getElementById('togglePasswordRegRepeat').addEventListener('click', () => togglePasswordVisibility('registerRepeat'));
+        document.getElementById('togglePasswordLogin').addEventListener('click', () => togglePasswordVisibility('login'));
+
+        function togglePasswordVisibility(formType) {
+            let inputElement;
+            let toggleIcon;
+            if (formType === 'register') {
+                inputElement = document.querySelector('#registrationForm input[name="password"]');
+                toggleIcon = document.querySelector('#togglePasswordReg');
+            } else if (formType === 'registerRepeat') {
+                inputElement = document.querySelector('#registrationForm input[name="repeatPassword"]');
+                toggleIcon = document.querySelector('#togglePasswordRegRepeat');
+            } else if (formType === 'login') {
+                inputElement = document.querySelector('#loginForm input[name="password"]');
+                toggleIcon = document.querySelector('#togglePasswordLogin');
+            }
+            const type = inputElement.getAttribute('type') === 'password' ? 'text' : 'password';
+            inputElement.setAttribute('type', type);
+            toggleIcon.classList.toggle('fa-eye-slash');
+        }
+
+        // Handle Registration
+        document.getElementById('register').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = this.username.value;
+            const email = this.email.value;
+            const password = this.password.value;
+            const repeatPassword = this.repeatPassword.value;
+
+            if (password !== repeatPassword) {
+                document.getElementById('message').innerText = 'Passwords do not match.';
+                return;
+            }
+
+            const submitButton = this.querySelector('button');
+            submitButton.disabled = true;
+            document.getElementById('message').innerText = 'Processing...';
+
+            fetch('/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, email, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                submitButton.disabled = false;
+                document.getElementById('message').innerText = data.message;
+                if (data.success) {
+                    toggleForms(); // Toggle to login form after successful registration
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                submitButton.disabled = false;
+                document.getElementById('message').innerText = 'Error occurred during registration.';
+            });
+        });
+
+        // Handle Login
+        document.getElementById('login').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const email = this.email.value;
+            const password = this.password.value;
+
+            const submitButton = this.querySelector('button');
+            submitButton.disabled = true;
+            document.getElementById('message').innerText = 'Processing...';
+
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                submitButton.disabled = false;
+                document.getElementById('message').innerText = data.message;
+                if (data.success) {
+                    document.getElementById('loginForm').classList.add('hidden');
+                    document.getElementById('logoutButton').classList.remove('hidden');
+                    document.getElementById('message').innerText = 'Successfully logged in!';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                submitButton.disabled = false;
+                document.getElementById('message').innerText = 'Error occurred during login.';
+            });
+        });
+
+        // Handle Logout
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('message').innerText = data.message;
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('logoutButton').classList.add('hidden');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('message').innerText = 'Error occurred during logout.';
+            });
+        });
+    </script>
+
+    <style>
+        .hidden { display: none; }
+    </style>
+
+
+    
+    
+    <!-- <script src="home-page.js"></script> -->
+    <style>
+        /* Reset and universal styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #1f242d;
+    color: #fff;
+}
+
+/* Hide scrollbar */
+::-webkit-scrollbar {
+  display: none;
+}
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+}
+
+/* Header and navbar */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 5px 10%;  /* Reduced padding for a smaller header */
+    background: #1094A7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+}
+
+.logo {
+    width: 9vh; /* Reduced size of the logo */
+    cursor: pointer;
+    opacity: 1;
+    margin-left: -10vh;
+    margin-top: .20vh; /* Reduced margin to make it more compact */
+    margin-bottom: -1vh;
+}
+.active{
+    color: #000;
+}
+
+/* Navbar links (anchor tags) */
+.navbar {
+    display: flex;
+    justify-content: space-between; /* Even space between links */
+    flex-grow: 1;  /* Take up all available space */
+    align-items: center;
+}
+
+.navbar a {
+    display: inline-block;
+    font-size: 1.5rem; /* Slightly smaller font size for a more compact look */
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: .3s;
+    opacity: 1;
+    padding: 5px 15px;  /* Reduced padding for smaller links */
+    position: relative;  /* Set positioning context for pseudo-element */
+}
+
+/* Underline effect on hover for navbar links */
+.links::after {
+    content: '';
+    position: absolute;
+    bottom: 0;  /* Place the underline at the bottom of the link */
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #fff;  /* Underline color */
+    transition: width 0.3s ease;  /* Smooth transition for expanding the underline */
+}
+
+.links:hover::after {
+    width: 100%;  /* Expand underline to full width of the link */
+}
+
+/* Keep the underline for active links */
+.navbar a.active::after {
+    width: 100%; /* Ensure the underline stays at full width when active */
+}
+
+
+/* Underline effect on hover for navbar links only */
+.links::after {
+    content: '';
+    position: absolute;
+    bottom: 0;  /* Place the underline at the bottom of the link */
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #fff;  /* Underline color */
+    transition: width 0.3s ease;  /* Smooth transition for expanding the underline */
+}
+
+.links:hover::after {
+    width: 100%;  /* Expand underline to full width of the link */
+}
+
+
+/* Account icon */
+.account {
+    font-size: 3.25rem;  /* Set the initial size of the icon */
+    cursor: pointer;
+    margin-right: -10vh;
+    opacity: 1;  /* Make sure the icon is visible */
+    transition: font-size 0.3s ease; /* Smooth transition for font size */
+    flex-shrink: 0;  /* Prevent shrinking in flexbox layout */
+}
+
+/* Container for the forms */
+.container {
+    width: 100%;
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    border: 2.5px solid #000000;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    justify-content: center;
+    margin-top: 20vh;
+}
+
+/* Form Title */
+h1 {
+    text-align: center;
+    color: #17909b;
+    font-size: 3rem;
+    text-shadow: 
+                -0.5px -0.5px 0 #15737b,
+                0.5px -0.5px 0 #15737b,
+                -0.5px 0.5px 0 #15737b,
+                0.5px 0.5px 0 #15737b;
+        
+}
+
+/* Input Fields */
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    justify-content: center;
+    font-size: 1.15rem;
+}
+
+input::placeholder  {
+    font-size: 1.15rem;
+    font-weight: bold;
+    justify-content: center;
+}
+
+/* Button Styles */
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4e089f;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.6rem;
+    transition: .5s ease-out;
+    box-shadow: 0 0 5px #4e089f;
+    margin-top: 2vh;
+}
+
+button:hover {
+    background-color: rgb(73, 16, 127);
+    box-shadow: 0 0 5px rgb(73, 16, 127);
+}
+
+/* Link Styles */
+a {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Error Message */
+.error {
+    color: red;
+    font-size: 14px;
+    text-align: center;
+}
+
+span {
+    color:#370ca4;
+    cursor: pointer;
+}
+
+p { 
+    margin-top: 3vh;
+    margin-bottom: 1.5vh;
+    text-align: center;
+    font-size: 1.25rem;
+}
+
+#loginForm {
+    align-items: center;
+    justify-content: center;
+}
+
+#logoutButton {
+    width: 20%;
+    padding: 8px;
+    background-color: #8a0ef7;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: .5s ease-out;
+    box-shadow: 0 0 5px #8a0ef7;
+    margin-top: 2vh;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+#logoutButton:hover {
+    background-color: #7230ab;
+    box-shadow: 0 0 5px #7230ab;
+}
+
+.password-container1,
+ .password-container2 {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-container1 input,
+.password-container2 input {
+    padding-right: 30px; /* Add space for the icon */
+}
+
+i {
+    position: absolute;
+    right: 10px;
+    color: #747272;
+}
+
+
+
+
+/* Keyframes for animations */
+@keyframes slideRight {
+    0% {
+        transform: translateX(-100px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideTop {
+    0% {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+    </style>
+</body>
+</html>
