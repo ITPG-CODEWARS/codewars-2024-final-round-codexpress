@@ -26,6 +26,22 @@ pub struct User {
     password: String,
 }
 
+#[derive(sqlx::FromRow, Serialize, Deserialize, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+pub struct Route {
+    pub id: i32,
+    pub start: String,
+    pub end: String,
+    pub data: Vec<u8>
+}
+
+#[derive(sqlx::FromRow, Serialize, Deserialize, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+pub struct Ticket {
+    pub id: i32,
+    pub owner_id: i32,
+    pub route_id: i32,
+    pub data: Vec<u8>
+}
+
 #[derive(Serialize, Deserialize, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 pub struct AdminUser(User);
 

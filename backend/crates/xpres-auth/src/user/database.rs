@@ -48,6 +48,49 @@ impl Database {
     pub async fn modify(&self, user: &User) {
         self.conn.update_user(user).await?;
     }
+
+    // Route-related methods
+    pub async fn create_route(&self, start: &str, end: &str, data: Vec<u8>) -> Result<(), Error> {
+        self.conn.create_route(start, end, data).await?;
+        Ok(())
+    }
+
+    pub async fn delete_route_by_id(&self, route_id: i32) -> Result<(), Error> {
+        self.conn.delete_route_by_id(route_id).await?;
+        Ok(())
+    }
+
+    pub async fn delete_route_by_start_end(&self, start: &str, end: &str) -> Result<(), Error> {
+        self.conn.delete_route(start, end).await?;
+        Ok(())
+    }
+
+    pub async fn get_route_by_id(&self, route_id: i32) -> Result<Route, Error> {
+        self.conn.get_route_by_id(route_id).await
+    }
+
+    pub async fn get_routes_by_start(&self, start: &str) -> Result<Vec<Route>, Error> {
+        self.conn.get_route_by_start(start).await
+    }
+
+    // Ticket-related methods
+    pub async fn create_ticket(
+        &self,
+        user_id: i32,
+        route_id: i32,
+        data: Vec<u8>,
+    ) -> Result<(), Error> {
+        self.conn.create_ticket(user_id, route_id, data).await?;
+        Ok(())
+    }
+
+    pub async fn get_ticket_by_id(&self, ticket_id: i32) -> Result<Ticket, Error> {
+        self.conn.get_ticket_by_id(ticket_id).await
+    }
+
+    pub async fn get_tickets_by_user(&self, user_id: i32) -> Result<Vec<Ticket>, Error> {
+        self.conn.get_tickets_by_user(user_id).await
+    }
 }
 
 impl<Conn: 'static + DBConnection> From<Conn> for Database {

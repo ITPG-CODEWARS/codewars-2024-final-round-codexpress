@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS "users" (
 
 CREATE TABLE IF NOT EXISTS "routes" (
 	"id" INTEGER NOT NULL UNIQUE,
-	"name" TEXT NOT NULL,
+	"start" TEXT NOT NULL,
+	"end" TEXT NOT NULL,
 	"data" BLOB,
 	PRIMARY KEY("id"),
 	FOREIGN KEY ("id") REFERENCES "ticket"("route_id")
@@ -60,4 +61,52 @@ DELETE FROM users WHERE id =?1;
 ";
 pub(crate) const REMOVE_BY_EMAIL: &str = "
 DELETE FROM users WHERE email =?1;
+";
+
+// ROUTES
+
+pub(crate) const INSERT_ROUTE: &str = "
+INSERT INTO routes (start, end, data) VALUES (?1, ?2, ?3);
+";
+
+pub(crate) const REMOVE_ROUTE_BY_ID: &str = "
+DELETE FROM routes WHERE id = ?1;
+";
+
+pub(crate) const REMOVE_ROUTE_BY_START_END: &str = "
+DELETE FROM routes WHERE start = ?1 AND end = ?2;
+";
+
+pub(crate) const SELECT_ROUTE_BY_ID: &str = "
+SELECT * FROM routes WHERE id = ?1;
+";
+
+pub(crate) const SELECT_ROUTE_BY_START: &str = "
+SELECT * FROM routes WHERE start = ?1;
+";
+
+// TICKET
+
+pub(crate) const INSERT_TICKET: &str = "
+INSERT INTO ticket (owner_id, route_id, data) VALUES (?1, ?2, ?3);
+";
+
+pub(crate) const REMOVE_TICKET_BY_OWNER_ID: &str = "
+DELETE FROM ticket WHERE owner_id = ?1;
+";
+
+pub(crate) const REMOVE_TICKET_BY_ROUTE_ID: &str = "
+DELETE FROM ticket WHERE route_id = ?1;
+";
+
+pub(crate) const SELECT_TICKET_BY_ID: &str = "
+	SELECT * FROM ticket where id = ?1
+";
+
+pub(crate) const SELECT_TICKET_BY_OWNER_ID: &str = "
+SELECT * FROM ticket WHERE owner_id = ?1;
+";
+
+pub(crate) const SELECT_TICKET_BY_ROUTE_ID: &str = "
+SELECT * FROM ticket WHERE route_id = ?1;
 ";
