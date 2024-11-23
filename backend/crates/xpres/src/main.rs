@@ -1,9 +1,9 @@
 use rocket::Responder;
 use rocket::{form::*, get, post, response::Redirect, routes, State};
+use rocket_dyn_templates::Template;
 use xpres_auth::{prelude::Error, Datastore, *};
 use serde_json::json;
 use sqlx::*;
-use rocket::response::content::RawHtml;
 
 use std::result::Result;
 use std::*;
@@ -56,16 +56,18 @@ async fn main() -> Result<(), Error> {
             "/",
             routes![
                 register,
-                index,
-                get_login,
                 login,
                 logout,
                 delete,
-                userlist,
+
+                index,
+                auth,
+                ticket
             ],
         )
         .manage(conn)
         .manage(users)
+        .attach(Template::fairing())
         .launch()
         .await
         .unwrap();
@@ -73,18 +75,35 @@ async fn main() -> Result<(), Error> {
 }
 
 
-#[get("/api/userlist")]
-async fn userlist(conn: &State<SqlitePool>, user: Option<User>) -> Result<String, Error> {
-    let users: Vec<User> = query_as("select * from users;").fetch_all(&**conn).await?;
-    println!("{:?}", users);
-    Ok(format!("Users: {}", json!({"users": users, "user": user})))
+#[get("/")]
+async fn index(user: Option<User>) -> Template {
+    Template::render("index", json!({ "user": user }))
+}
+
+#[get("/auth")]
+async fn auth() -> Template {
+    Template::render("auth", json!({}))
+}
+
+#[get("/ticket")]
+async fn ticket(user: Option<User>) -> Template {
+    Template::render("ticket", json!({ "user": user }))
 }
 
 
-#[get("/login")]
-fn get_login() -> RawHtml<String> {
-    RawHtml(include_str!("index.html").to_string())
-}
+
+// #[get("/api/userlist")]
+// async fn userlist(conn: &State<SqlitePool>, user: Option<User>) -> Result<String, Error> {
+//     let users: Vec<User> = query_as("select * from users;").fetch_all(&**conn).await?;
+//     println!("{:?}", users);
+//     Ok(format!("Users: {}", json!({"users": users, "user": user})))
+// }
+
+
+// #[get("/login")]
+// fn get_login() -> RawHtml<String> {
+//     RawHtml(include_str!("index.html").to_string())
+// }
 
 
 // #[get("/signup")]
@@ -93,7 +112,7 @@ fn get_login() -> RawHtml<String> {
 // }
 
 
-#[get("/")]
-async fn index(user: Option<User>) -> String {
-    format!("User: {}",  json!({ "user": user }))
-}
+// #[get("/")]
+// async fn index(user: Option<User>) -> String {
+//     format!("User: {}",  json!({ "user": user }))
+// }
