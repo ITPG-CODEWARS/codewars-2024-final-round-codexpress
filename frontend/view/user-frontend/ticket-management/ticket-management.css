@@ -219,8 +219,17 @@ strong{
     border-radius: 15px;
     border: 3px solid black;
     width: 70%;
-    padding: 3%;
+    padding: 3% 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 .downloadBtn{
-
+    background-color: #1094A7;
+    padding: 10% 0;
+    width: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
 }
