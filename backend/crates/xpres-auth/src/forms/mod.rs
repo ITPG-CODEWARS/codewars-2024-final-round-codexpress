@@ -1,8 +1,6 @@
 use crate::prelude::*;
 use validator::Validate;
 
-
-/// The `Login` form is used along with the [`Auth`] guard to authenticate users.
 #[derive(FromForm, Deserialize, Clone, Hash, PartialEq, Eq, Validate)]
 pub struct Login {
     #[validate(email)]
@@ -10,7 +8,6 @@ pub struct Login {
     pub(crate) password: String,
 }
 
-/// The `Signup` form is used along with the [`Auth`] guard to create new users.
 #[derive(FromForm, Deserialize, Clone, PartialEq, Eq, Hash, Validate)]
 pub struct Signup {
     #[validate(email)]
@@ -99,7 +96,7 @@ fn has_lowercase(password: &str) {
             return;
         }
     }
-    // throw!(Error::UnsafePasswordHasNoLower)
+
     throw!(ValidationError::new(
         "The password must include least one uppercase character.\n"
     ))
@@ -115,5 +112,4 @@ fn has_number(password: &str) {
     throw!(ValidationError::new(
         "The password has to contain at least one digit.\n"
     ))
-    // throw!(Error::UnsafePasswordHasNoDigit)
 }
