@@ -4,7 +4,7 @@
 #### Register user
 
 ```http
-  POST /api/register
+  POST /api/user/register
 ```
 
 | Parameter | Type     | Description                |
@@ -14,7 +14,7 @@
 #### Log-in user
 
 ```http
-  POST /api/login
+  POST /api/user/login
 ```
 
 | Parameter | Type     | Description                       |
@@ -26,7 +26,7 @@
 #### Logout user
 
 ```http
-  GET /api/logout
+  GET /api/user/logout
 ```
 - Revokes the session token and removed the HTTP Cookie. Returns error if unauthenticated.
 
@@ -34,7 +34,16 @@
 #### Deletes user
 
 ```http
-  GET /api/delete
+  GET /api/iser/delete
 ```
 - Revokes the session and deletes the user account and the associated data.
 
+#### Reserve ticket
+
+```http
+  POST /api/ticket/new
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `route`      | `id` | **Required**. Route ID|
