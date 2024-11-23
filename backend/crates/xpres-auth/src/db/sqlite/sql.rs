@@ -7,9 +7,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 	"email" TEXT NOT NULL UNIQUE,
 	"password" TEXT NOT NULL,
 	"is_admin" BOOLEAN NOT NULL DEFAULT false,
-	PRIMARY KEY("id"),
-	FOREIGN KEY ("id") REFERENCES "ticket"("owner_id")
-	ON UPDATE NO ACTION ON DELETE NO ACTION
+	PRIMARY KEY("id")
 );
 
 CREATE TABLE IF NOT EXISTS "routes" (
@@ -17,9 +15,7 @@ CREATE TABLE IF NOT EXISTS "routes" (
 	"start" TEXT NOT NULL,
 	"end" TEXT NOT NULL,
 	"data" BLOB,
-	PRIMARY KEY("id"),
-	FOREIGN KEY ("id") REFERENCES "ticket"("route_id")
-	ON UPDATE NO ACTION ON DELETE NO ACTION
+	PRIMARY KEY("id")
 );
 
 CREATE TABLE IF NOT EXISTS "ticket" (
@@ -27,9 +23,12 @@ CREATE TABLE IF NOT EXISTS "ticket" (
 	"id" INTEGER NOT NULL UNIQUE,
 	"route_id" INTEGER NOT NULL,
 	"data" BLOB,
-	PRIMARY KEY("owner_id")
+	PRIMARY KEY("owner_id"),
+	FOREIGN KEY ("owner_id") REFERENCES "users"("id")
+	ON UPDATE NO ACTION ON DELETE NO ACTION,
+	FOREIGN KEY ("route_id") REFERENCES "routes"("id")
+	ON UPDATE NO ACTION ON DELETE NO ACTION
 );
-
 
 "#;
 

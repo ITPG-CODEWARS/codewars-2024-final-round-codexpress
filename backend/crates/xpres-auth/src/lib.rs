@@ -51,7 +51,7 @@ impl Debug for AdminUser {
     }
 }
 
-pub struct Database {
+pub struct Datastore {
     conn: Box<dyn DBConnection>,
     sess: Box<dyn SessionManager>,
 }

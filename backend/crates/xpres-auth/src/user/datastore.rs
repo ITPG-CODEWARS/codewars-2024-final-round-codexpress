@@ -2,11 +2,11 @@ use super::rand_string;
 use crate::db::DBConnection;
 use crate::prelude::*;
 
-impl Database {
+impl Datastore {
     #[throws(Error)]
     pub async fn open_sqlite(path: &str) -> Self {
         let conn = sqlx::SqlitePool::connect(path).await?;
-        let users: Database = conn.into();
+        let users: Datastore = conn.into();
         users.create_table().await?;
         users
     }
@@ -93,18 +93,18 @@ impl Database {
     }
 }
 
-impl<Conn: 'static + DBConnection> From<Conn> for Database {
-    fn from(db: Conn) -> Database {
-        Database {
+impl<Conn: 'static + DBConnection> From<Conn> for Datastore {
+    fn from(db: Conn) -> Datastore {
+        Datastore {
             conn: Box::from(db),
             sess: Box::new(chashmap::CHashMap::new()),
         }
     }
 }
 
-impl<T0: 'static + DBConnection, T1: 'static + SessionManager> From<(T0, T1)> for Database {
-    fn from((db, ss): (T0, T1)) -> Database {
-        Database {
+impl<T0: 'static + DBConnection, T1: 'static + SessionManager> From<(T0, T1)> for Datastore {
+    fn from((db, ss): (T0, T1)) -> Datastore {
+        Datastore {
             conn: Box::from(db),
             sess: Box::new(ss),
         }
