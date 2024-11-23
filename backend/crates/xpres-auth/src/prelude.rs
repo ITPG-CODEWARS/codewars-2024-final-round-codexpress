@@ -1,7 +1,7 @@
 pub use crate::cookies::Session;
 pub use crate::error::Error;
 pub use crate::forms::{Login, Signup};
-pub use crate::{AdminUser, Auth, User, Database, Route, Ticket};
+pub use crate::{AdminUser, Auth, User, Datastore, Route, Ticket};
 
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 

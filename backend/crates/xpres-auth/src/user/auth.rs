@@ -21,7 +21,7 @@ pub fn validate_email(email: &String) -> bool {
 
 #[allow(missing_docs)]
 pub struct Auth<'a> {
-    pub users: &'a State<Database>,
+    pub users: &'a State<Datastore>,
     pub cookies: &'a CookieJar<'a>,
     pub session: Option<Session>,
 }
@@ -36,7 +36,7 @@ impl<'r> FromRequest<'r> for Auth<'r> {
             None
         };
 
-        let users: &State<Database> = if let Outcome::Success(users) = req.guard().await {
+        let users: &State<Datastore> = if let Outcome::Success(users) = req.guard().await {
             users
         } else {
             return Outcome::Error((Status::InternalServerError, Error::UnmanagedStateError));
@@ -84,6 +84,11 @@ impl<'a> Auth<'a> {
     #[throws(Error)]
     pub async fn signup(&self, form: &Signup) {
         self.users.signup(form).await?;
+    }
+
+    #[throws(Error)]
+    pub async fn signup_admin(&self, form: &Signup) {
+        self.users.signup_admin(form).await?;
     }
 
     #[throws(Error)]
