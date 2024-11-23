@@ -1,0 +1,172 @@
+/* Reset and universal styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #1f242d;
+    color: #fff;
+}
+
+/* Hide scrollbar */
+::-webkit-scrollbar {
+  display: none;
+}
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+}
+
+/* Header and navbar */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 5px 10%;  /* Reduced padding for a smaller header */
+    background: #1094A7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+}
+
+.logo {
+    width: 9vh; /* Reduced size of the logo */
+    cursor: pointer;
+    opacity: 1;
+    margin-left: -10vh;
+    margin-top: .20vh; /* Reduced margin to make it more compact */
+    margin-bottom: -1vh;
+}
+.active{
+    color: #000;
+}
+
+/* Navbar links (anchor tags) */
+.navbar {
+    display: flex;
+    justify-content: space-between; /* Even space between links */
+    flex-grow: 1;  /* Take up all available space */
+    align-items: center;
+}
+
+.navbar a {
+    display: inline-block;
+    font-size: 1.5rem; /* Slightly smaller font size for a more compact look */
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: .3s;
+    opacity: 1;
+    padding: 5px 15px;  /* Reduced padding for smaller links */
+    position: relative;  /* Set positioning context for pseudo-element */
+}
+
+/* Underline effect on hover for navbar links */
+.links::after {
+    content: '';
+    position: absolute;
+    bottom: 0;  /* Place the underline at the bottom of the link */
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #fff;  /* Underline color */
+    transition: width 0.3s ease;  /* Smooth transition for expanding the underline */
+}
+
+.links:hover::after {
+    width: 100%;  /* Expand underline to full width of the link */
+}
+
+/* Keep the underline for active links */
+.navbar a.active::after {
+    width: 100%; /* Ensure the underline stays at full width when active */
+}
+
+
+/* Underline effect on hover for navbar links only */
+.links::after {
+    content: '';
+    position: absolute;
+    bottom: 0;  /* Place the underline at the bottom of the link */
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #fff;  /* Underline color */
+    transition: width 0.3s ease;  /* Smooth transition for expanding the underline */
+}
+
+.links:hover::after {
+    width: 100%;  /* Expand underline to full width of the link */
+}
+
+
+/* Account icon */
+.account {
+    font-size: 3.25rem;  /* Set the initial size of the icon */
+    cursor: pointer;
+    margin-right: -10vh;
+    opacity: 1;  /* Make sure the icon is visible */
+    transition: font-size 0.3s ease; /* Smooth transition for font size */
+    flex-shrink: 0;  /* Prevent shrinking in flexbox layout */
+}
+
+/* Image with a fade effect at the bottom */
+.home-img {
+    position: relative; /* Necessary for the ::after pseudo-element */
+    width: 100%; /* Ensure the image takes full width */
+    height: auto; /* Ensure the image maintains its aspect ratio */
+    display: block; /* Prevent any gaps below the image */
+    background: linear-gradient(to bottom, transparent, #1f242d);
+}
+
+/* Gradient fade effect at the bottom of the image */
+.home-img::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 20%; /* Adjust this value to control how much of the image has the fade effect */
+    background: linear-gradient(to bottom, transparent, #1f242d), url("../view/images/home-img.webp"); /* Fade from transparent to background color */
+    z-index: 10; /* Ensure the fade is visible above the image */
+}
+
+
+
+
+
+
+
+
+/* Keyframes for animations */
+@keyframes slideRight {
+    0% {
+        transform: translateX(-100px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideTop {
+    0% {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
