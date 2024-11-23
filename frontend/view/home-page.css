@@ -142,6 +142,32 @@ body {
 }
 
 
+.home-text {
+    display: flex;
+    flex-direction: column; /* Stack the items vertically */
+    justify-content: center; /* Vertically center the content */
+    align-items: center; /* Horizontally center the content */
+    text-align: center; /* Ensure the text is centered inside the elements */
+    height: 40vh; /* Ensure the container takes the full height of the viewport */
+    padding: 20px; /* Optional: Add some padding if needed */
+}
+
+.home-text h1 {
+    margin-bottom: 15px; /* Optional: Space between the heading and the paragraph */
+    font-size: 3rem;
+    color: #0ef;
+}
+
+strong{
+    color: rgb(28, 166, 166);
+}
+
+.home-text p {
+    max-width: 900px; /* Optional: Set a maximum width for the paragraph for better readability */
+    font-size: 1.25rem;
+}
+
+
 
 
 
