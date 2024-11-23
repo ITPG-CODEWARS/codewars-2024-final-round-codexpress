@@ -21,7 +21,7 @@ pub fn validate_email(email: &String) -> bool {
 
 #[allow(missing_docs)]
 pub struct Auth<'a> {
-    pub users: &'a State<Users>,
+    pub users: &'a State<Database>,
     pub cookies: &'a CookieJar<'a>,
     pub session: Option<Session>,
 }
@@ -36,7 +36,7 @@ impl<'r> FromRequest<'r> for Auth<'r> {
             None
         };
 
-        let users: &State<Users> = if let Outcome::Success(users) = req.guard().await {
+        let users: &State<Database> = if let Outcome::Success(users) = req.guard().await {
             users
         } else {
             return Outcome::Error((Status::InternalServerError, Error::UnmanagedStateError));
@@ -62,7 +62,7 @@ impl<'a> Auth<'a> {
             time_stamp: now(),
         };
         let to_str = format!("{}", json!(session));
-        self.cookies.add_private(Cookie::new("rocket_auth", to_str));
+        self.cookies.add_private(Cookie::new("xpres-auth", to_str));
     }
 
     #[throws(Error)]
@@ -77,7 +77,7 @@ impl<'a> Auth<'a> {
             time_stamp: now(),
         };
         let to_str = format!("{}", json!(session));
-        let cookie = Cookie::new("rocket_auth", to_str);
+        let cookie = Cookie::new("xpres-auth", to_str);
         self.cookies.add_private(cookie);
     }
 
@@ -116,7 +116,7 @@ impl<'a> Auth<'a> {
     pub fn logout(&self) {
         let session = self.get_session()?;
         self.users.logout(session)?;
-        self.cookies.remove_private(Cookie::build("rocket_auth"));
+        self.cookies.remove_private(Cookie::build("xpres-auth"));
     }
 
     #[throws(Error)]
@@ -124,7 +124,7 @@ impl<'a> Auth<'a> {
         if self.is_auth() {
             let session = self.get_session()?;
             self.users.delete(session.id).await?;
-            self.cookies.remove_private("rocket_auth");
+            self.cookies.remove_private("xpres-auth");
         } else {
             throw!(Error::UnauthenticatedError)
         }

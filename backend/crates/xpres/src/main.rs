@@ -1,5 +1,5 @@
 use rocket::{form::*, get, post, response::Redirect, routes, State};
-use xpres_auth::{prelude::Error, *};
+use xpres_auth::{prelude::Error, Database, *};
 use serde_json::json;
 use sqlx::*;
 
@@ -45,7 +45,7 @@ async fn userlist(conn: &State<SqlitePool>, user: Option<User>) -> Result<String
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     let conn = SqlitePool::connect("sqlite::memory:").await?;
-    let users: Users = conn.clone().into();
+    let users: xpres_auth::Database = conn.clone().into();
     users.create_table().await?;
 
     let _ = rocket::build()

@@ -1,6 +1,6 @@
 pub mod auth;
 mod user_impl;
-mod users;
+mod database;
 use crate::prelude::*;
 use argon2::verify_encoded as verify;
 
@@ -14,7 +14,7 @@ pub fn rand_string(size: usize) -> String {
         .collect()
 }
 
-impl Users {
+impl Database {
     fn is_auth(&self, session: &Session) -> bool {
         let option = self.sess.get(session.id);
         if let Some(auth_key) = option {
